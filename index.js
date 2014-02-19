@@ -77,16 +77,22 @@ function put(request, response) {
 	// TODO: refresh session id; similar to the post() function
 	var cookies = request.cookies;
 	if ('session_id' in cookies) {
+
 		var sid = cookies['session_id'];
+		response.setHeader('Old session_id' , sid);
 		var obj = login.getmap(sid);
 		var newSessionId = login.login(obj.name, obj.email);
 		delete login.sessionMap[sid];
 		//del(request,response);
-    	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
-		response.end(login.hello(newSessionId));
+    	response.setHeader('New session_id' ,newSessionId);
+    	response.end("Refreshed Session\n");
+		
 	}
+	else
+	{
     //del(request,response);
-	response.end("Re-freshed session id\n");
+		response.end("No session id to refresh\n");
+	}
 };
 
 
