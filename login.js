@@ -37,11 +37,21 @@ Login.prototype.login = function(_name, _email) {
 	return sessionId;
 };
 
+Login.prototype.getmap = function(sessionId)
+{
+	return this.sessionMap[sessionId];
+};
+
 /**
  * Logout from the server
  */ 
 Login.prototype.logout = function(sessionId) {
-	console.log('logout::' + sessionId);
+	
+		delete this.sessionMap[sessionId];
+		console.log(this.sessionMap);
+		console.log('logout::' + sessionId);
+	
+	
    /*
 	* TODO: Remove the given sessionId from the sessionMap
 	*/

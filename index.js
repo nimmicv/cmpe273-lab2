@@ -15,7 +15,7 @@ function main(request, response, next) {
 		case 'GET': get(request, response); break;
 		case 'POST': post(request, response); break;
 		case 'DELETE': del(request, response); break;
-		case 'PUT': post(request, response); break;
+		case 'PUT': put(request, response); break;
 	}
 };
 
@@ -35,29 +35,62 @@ function get(request, response) {
 	}
 };
 
-function post(request, response) {
-	// TODO: read 'name and email from the request.body'
-	// var newSessionId = login.login('xxx', 'xxx@gmail.com');
-	// TODO: set new session id to the 'session_id' cookie in the response
-	// replace "Logged In" response with response.end(login.hello(newSessionId));
 
-	response.end("Logged In\n");
+function post(request, response) {
+	var cookies = request.cookies;
+	console.log(cookies);
+
+	console.log("Hello There "+request.body.name);
+	var newSessionId = login.login(request.body.name, request.body.email);
+    response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+	response.end(login.hello(newSessionId));
 };
 
 function del(request, response) {
 	console.log("DELETE:: Logout from the server");
+	var cookies = request.cookies;
+	console.log(cookies);
+	if ('session_id' in cookies) {
+		var sid = cookies['session_id'];
+		if(login.isLoggedIn(sid))
+		{
+		login.logout(sid);
+		response.end('Logged out from the server\n');
+		}
+		else
+		{
+			response.end('Invalid command\n');
+		}
+	}
+	else
+	{
+			response.end('Invalid command\n');
+	}
+
  	// TODO: remove session id via login.logout(xxx)
  	// No need to set session id in the response cookies since you just logged out!
-
-  	response.end('Logged out from the server\n');
+  
 };
 
 function put(request, response) {
 	console.log("PUT:: Re-generate new seesion_id for the same user");
 	// TODO: refresh session id; similar to the post() function
-
+	var cookies = request.cookies;
+	if ('session_id' in cookies) {
+		var sid = cookies['session_id'];
+		var obj = login.getmap(sid);
+		var newSessionId = login.login(obj.name, obj.email);
+		delete login.sessionMap[sid];
+		//del(request,response);
+    	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+		response.end(login.hello(newSessionId));
+	}
+    //del(request,response);
 	response.end("Re-freshed session id\n");
 };
+
+
+
 
 app.listen(8000);
 
