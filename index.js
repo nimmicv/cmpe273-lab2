@@ -79,13 +79,13 @@ function put(request, response) {
 	if ('session_id' in cookies) {
 
 		var sid = cookies['session_id'];
-		response.setHeader('Old session_id' , sid);
+		//response.setHeader('Old session_id' , sid);
 		var obj = login.getmap(sid);
 		var newSessionId = login.login(obj.name, obj.email);
 		delete login.sessionMap[sid];
 		//del(request,response);
-    	response.setHeader('New session_id' ,newSessionId);
-    	response.end("Refreshed Session\n");
+    	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+    	response.end("Refreshed Session id\n");
 		
 	}
 	else
