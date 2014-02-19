@@ -25,6 +25,7 @@ function get(request, response) {
 	if ('session_id' in cookies) {
 		var sid = cookies['session_id'];
 		if ( login.isLoggedIn(sid) ) {
+			response.setHeader('Content-type', 'text/xml');
 			response.setHeader('Set-Cookie', 'session_id=' + sid);
 			response.end(login.hello(sid));	
 		} else {
@@ -42,7 +43,9 @@ function post(request, response) {
 
 	console.log("Hello There "+request.body.name);
 	var newSessionId = login.login(request.body.name, request.body.email);
+	 response.setHeader('Content-type', 'text/xml');
     response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+  
 	response.end(login.hello(newSessionId));
 };
 
@@ -50,6 +53,7 @@ function del(request, response) {
 	console.log("DELETE:: Logout from the server");
 	var cookies = request.cookies;
 	console.log(cookies);
+	  response.setHeader('Content-type', 'text/xml');
 	if ('session_id' in cookies) {
 		var sid = cookies['session_id'];
 		if(login.isLoggedIn(sid))
@@ -84,6 +88,7 @@ function put(request, response) {
 		var newSessionId = login.login(obj.name, obj.email);
 		delete login.sessionMap[sid];
 		//del(request,response);
+		  response.setHeader('Content-type', 'text/xml');
     	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
     	response.end("Refreshed Session id\n");
 		
